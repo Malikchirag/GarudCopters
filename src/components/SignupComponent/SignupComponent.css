@@ -1,0 +1,143 @@
+#signup-div {
+    position: absolute;
+    z-index: 10;
+    top: 20%;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 400px;
+    padding: 2rem;
+    border-radius: 16px;
+    backdrop-filter: blur(15px);
+    background: rgba(255, 255, 255, 0.1);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.25);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: white;
+    font-family: sans-serif;
+    pointer-events: none;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    opacity: 0;
+    animation: fadeIn .25s ease-in-out forwards;
+}
+
+@keyframes fadeIn {
+    to {
+        opacity: 1;
+    }
+}
+
+
+#signup-heading {
+    text-align: center;
+    font-size: 3.2rem;
+    margin:2% 0 10% 0;
+}
+
+#signup-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+    pointer-events: none;
+}
+
+#signup-form > div {
+    display: flex;
+    flex-direction: column;
+    pointer-events: none;
+}
+
+#display-name-label,
+#gmail-label,
+#password-label {
+    font-size: 0.95rem;
+    margin-bottom: 0.3rem;
+    margin-left: 0.25rem;
+    pointer-events: none;
+}
+
+#display-name-input,
+#gmail-input,
+#password-input {
+    width: 94%;
+    padding: 0.6rem 0.75rem;
+    border-radius: 8px;
+    border: 2px solid transparent;
+    font-size: 1rem;
+    background-color: rgba(18, 18, 18, 0.7);
+    color: white;
+    outline: none;
+    pointer-events: auto;
+    backdrop-filter: blur(4px);
+    transition: border-color 0.3s ease, color 0.3s ease;
+}
+
+#display-name-input:focus,
+#gmail-input:focus,
+#password-input:focus,
+#display-name-input:not(:placeholder-shown),
+#gmail-input:not(:placeholder-shown),
+#password-input:not(:placeholder-shown) {
+    border-color: #000000;
+}
+
+#display-name-input.error,
+#gmail-input.error,
+#password-input.error {
+    border-color: red;
+    color: red;
+}
+
+#display-name-input.error::placeholder,
+#gmail-input.error::placeholder,
+#password-input.error::placeholder {
+    color: red;
+}
+
+#submit-button {
+    padding: 0.9rem;
+    background-color: #000000;
+    border-radius: 8px;
+    font-weight: bold;
+    border: none;
+    color: white;
+    cursor: pointer;
+    transition: background 0.3s ease;
+    pointer-events: auto;
+    width: 400px;
+    margin: 4% auto;
+}
+
+#submit-button:hover {
+    background-color: #121212;
+    color: #ffffff;
+}
+
+#login-link {
+    text-align: center;
+    font-size: 0.9rem;
+    margin-top: -8%;
+    margin-bottom: 10%;
+    color: #ffffffb3;
+    pointer-events: visible !important;
+}
+
+#login-link a {
+    color: #ffffff;
+    text-decoration: underline;
+}
+
+#terms-text {
+    font-size: 0.75rem;
+    color: #ffffffb3;
+    margin-top: 8px;
+    margin-bottom: -10px;
+    padding: 0 0.25rem;
+    text-align: center;
+    pointer-events: visible !important;
+}
+
+#terms-text a {
+    color: #ffffff;
+    text-decoration: underline;
+}

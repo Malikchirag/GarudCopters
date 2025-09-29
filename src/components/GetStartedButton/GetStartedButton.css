@@ -1,0 +1,19 @@
+#get-started-button{
+    border-radius: 10px;
+    text-decoration: none;
+    cursor: pointer;
+    transition: transform 0.3s ease-out;
+    background-color: white;
+    margin-top: 3%;
+}
+
+#get-started-button:hover{
+    transform: scale(1.05);
+}
+
+#get-started-button-text{
+    color: black;
+    font-size: 1.3rem;
+    margin: 15px 30px 15px 30px;
+    font-weight: 500;
+}

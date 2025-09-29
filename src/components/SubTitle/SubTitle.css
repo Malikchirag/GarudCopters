@@ -1,0 +1,23 @@
+#subtitle-card{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    width: 600px;
+    padding: 0.5rem;
+    margin: auto 5% auto 5%;
+    /* background-color: aqua; */
+    z-index: 10;
+}
+
+#subtitle-heading{
+    font-size: 3rem;
+    margin: 5% 2.5% 2% 2.5%;
+    /* text-align: center; */
+}
+
+#subtitle-text{
+    font-size: 1.2rem;
+    margin: 5% 2.5% 10% 2.5%;
+    /* text-align: center; */
+}

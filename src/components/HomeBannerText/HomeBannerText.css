@@ -1,0 +1,33 @@
+#home-banner-text{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 10;
+    text-align: center;
+    opacity: 0;
+    animation: fadeIn .25s ease-in-out forwards;
+    white-space: nowrap;
+}
+
+@keyframes fadeIn {
+    to {
+        opacity: 1;
+    }
+}
+
+
+#banner-heading{
+    font-size: 9rem;
+    margin: 0%;
+    padding: 0%;
+    white-space: nowrap;
+}
+
+.text{
+    font-size: 1.4rem;
+}

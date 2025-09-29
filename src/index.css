@@ -1,0 +1,60 @@
+* {
+  font-family: 'Montserrat', sans-serif;
+}
+
+body {
+  background-color: #000000;
+  margin: 0%;
+  padding: 0%;
+  color: white;
+}
+
+::-webkit-scrollbar {
+  width: 10px;
+  z-index: 100;
+  position: relative;
+}
+
+::-webkit-scrollbar-track {
+  background: #121212;
+  z-index: 100;
+  position: relative;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #121212;
+  border-radius: 5px;
+  z-index: 100;
+  position: relative;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #121212;
+}
+
+/* For Firefox */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #000000 #121212;
+}
+
+.montserrat-regular {
+  font-family: "Montserrat", sans-serif;
+  font-optical-sizing: auto;
+  font-weight: 400;
+  font-style: normal;
+}
+
+.montserrat-bold {
+  font-family: "Montserrat", sans-serif;
+  font-optical-sizing: auto;
+  font-weight: 700;
+  font-style: normal;
+}
+
+.montserrat-light {
+  font-family: "Montserrat", sans-serif;
+  font-optical-sizing: auto;
+  font-weight: 300;
+  font-style: normal;
+}

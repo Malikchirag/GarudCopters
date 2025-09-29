@@ -1,0 +1,180 @@
+#logo-div {
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+}
+
+#header-logo {
+    width: 120px;
+    height: auto;
+    object-fit: contain;
+    margin: 0;
+}
+
+#header-div {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 20px 0 0 0;
+    padding: 0 5%;
+    position: relative;
+}
+
+#navigation-buttons {
+    z-index: 15;
+    list-style: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0;
+    padding: 0;
+    pointer-events: auto !important;
+}
+
+.h-nav-btns {
+    text-decoration: none;
+    color: rgb(255, 255, 255);
+    font-weight: 600;
+    font-size: 1.1rem;
+    margin: 0 30px;
+    transition: color 0.3s ease;
+}
+
+/* Change text color when in dark section */
+.dark-section .h-nav-btns {
+    color: white;
+}
+
+.h-nav-btns:hover {
+    color: #484848;
+    cursor: pointer;
+}
+
+.dark-section .h-nav-btns:hover {
+    color: #d4d4d4;
+}
+
+.h-nav-btns.active {
+    font-weight: bold;
+    text-decoration: underline;
+    text-decoration-thickness: 2px;
+}
+
+#container-div-header {
+    position: fixed;
+    width: 100%;
+    top: 0;
+    left: 0;
+    z-index: 100;
+    transition: background-color 0.3s ease;
+    pointer-events: auto;
+    pointer-events: none;
+}
+
+.dark-section {
+    background-color: rgba(0, 0, 0, 0.4);
+}
+
+/* Hamburger menu (hidden by default on desktop) */
+.hamburger {
+    display: none;
+    flex-direction: column;
+    justify-content: space-between;
+    width: 30px;
+    height: 24px;
+    cursor: pointer;
+    z-index: 20;
+    pointer-events: auto !important;
+}
+
+.bar {
+    height: 3px;
+    width: 100%;
+    background-color: rgb(255, 255, 255);
+    border-radius: 10px;
+    transition: all 0.3s ease;
+}
+
+.dark-section .bar {
+    background-color: white;
+}
+
+/* Hamburger animation */
+.bar.open:nth-child(1) {
+    transform: translateY(10px) rotate(45deg);
+}
+
+.bar.open:nth-child(2) {
+    opacity: 0;
+}
+
+.bar.open:nth-child(3) {
+    transform: translateY(-10px) rotate(-45deg);
+}
+
+/* Media Queries for Responsiveness */
+@media screen and (max-width: 768px) {
+    .hamburger {
+        display: flex;
+        position: absolute;
+        right: 20px;
+        top: 20px;
+    }
+    
+    nav {
+        position: fixed;
+        top: 0;
+        right: -100%;
+        width: 70%;
+        height: 100vh;
+        background-color: #121212;
+        transition: right 0.3s ease;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 100; /* Higher than container but lower than hamburger */
+    }
+    
+    .dark-section nav {
+        background-color: rgba(0, 0, 0, 0.95);
+    }
+    
+    nav.open {
+        right: 0;
+    }
+    
+    #navigation-buttons {
+        flex-direction: column;
+        align-items: center;
+        height: 50%;
+    }
+    
+    #navigation-buttons li {
+        margin: 15px 0;
+    }
+    
+    .h-nav-btns {
+        font-size: 1.5rem;
+    }
+    
+    #header-div {
+        justify-content: flex-start;
+        padding: 20px;
+    }
+    
+    /* Ensure the container is only big enough for the hamburger in mobile view */
+    #container-div-header {
+        height: 70px;
+    }
+}
+
+@media screen and (max-width: 480px) {
+    nav {
+        width: 100%;
+    }
+    
+    .h-nav-btns {
+        font-size: 1.3rem;
+    }
+}
