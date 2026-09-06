@@ -39,7 +39,15 @@ DEFAULT_CONF = 0.35
 
 BOX_COLOR = {
     "person": (60, 180, 220),   # BGR
+    # Real dataset ships these as separate classes rather than one merged
+    # "vehicle" (see DATASET.md) -- one shared green family, distinguishable
+    # from person/debris, individually still readable via the text label.
     "vehicle": (80, 200, 90),
+    "car": (80, 200, 90),
+    "truck": (60, 170, 80),
+    "bus": (50, 150, 70),
+    "motorcycle": (100, 210, 110),
+    "bicycle": (120, 220, 130),
     "debris": (120, 120, 130),
 }
 DEFAULT_COLOR = (255, 255, 255)

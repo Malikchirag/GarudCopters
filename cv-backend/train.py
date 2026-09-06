@@ -83,6 +83,11 @@ def main():
     parser.add_argument("--imgsz", type=int, default=640)
     parser.add_argument("--batch", type=int, default=16)
     parser.add_argument("--patience", type=int, default=10, help="early-stopping patience, epochs")
+    parser.add_argument("--fraction", type=float, default=1.0,
+                         help="fraction of the training set to actually use (Ultralytics' own param). "
+                              "Still real photos with real annotations, just fewer of them -- a legitimate "
+                              "way to get a fast, honest signal on limited (e.g. CPU-only) hardware instead "
+                              "of a slow full-dataset run. Recorded in metrics.json when < 1.0.")
     parser.add_argument("--project", default=str(ROOT / "runs" / "detect"), help="Ultralytics run output root")
     parser.add_argument("--name", default="train", help="run name, becomes <project>/<name>/")
     parser.add_argument("--run-type", default="production",
@@ -118,6 +123,7 @@ def main():
         imgsz=args.imgsz,
         batch=args.batch,
         patience=args.patience,
+        fraction=args.fraction,
         project=args.project,
         name=args.name,
         exist_ok=True,
@@ -147,6 +153,7 @@ def main():
         "imgsz": args.imgsz,
         "batch": args.batch,
         "patience": args.patience,
+        "fraction": args.fraction,
         # These four are the real numbers the brief asks for, pulled straight
         # out of Ultralytics' own DetMetrics object — nothing hand-typed.
         "mAP50": float(metrics.box.map50),
@@ -162,6 +169,20 @@ def main():
             "Trained on scripts/make_smoke_dataset.py synthetic shapes, not the real "
             "aerial-person-detection dataset in DATASET.md. These numbers prove the "
             "train/val pipeline runs end-to-end; they are not a model-quality claim."
+        )
+    elif args.run_type == "production" and (args.epochs < 50 or args.imgsz < 640 or args.fraction < 1.0):
+        # Real dataset, real numbers -- but scaled down from the brief's
+        # 50-epoch/imgsz=640/full-dataset spec because this ran on CPU-only
+        # local hardware, not a GPU. Said explicitly so a lower epoch/imgsz/
+        # fraction here is never mistaken for the full spec run.
+        frac_note = f" and {args.fraction:.0%} of the training images" if args.fraction < 1.0 else ""
+        metrics_out["note"] = (
+            f"Real photos with real annotations (aerial-person-detection dataset, "
+            f"see DATASET.md) -- but {args.epochs} epochs at imgsz={args.imgsz}{frac_note}, "
+            f"rather than the brief's 50-epoch/imgsz=640/full-dataset default, reduced "
+            f"to fit CPU-only training time in this environment. Same script, same real "
+            f"dataset; re-run with defaults (or --epochs 50 --imgsz 640 --fraction 1.0) "
+            f"on a GPU for the full spec run."
         )
 
     metrics_path = run_dir / "metrics.json"
