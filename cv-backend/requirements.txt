@@ -1,0 +1,10 @@
+ultralytics
+opencv-python
+fastapi
+uvicorn[standard]
+python-multipart
+pydantic
+langgraph
+langchain-anthropic
+roboflow
+python-dotenv
