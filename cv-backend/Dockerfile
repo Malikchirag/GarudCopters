@@ -15,7 +15,10 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     && rm -rf /var/lib/apt/lists/*
 
 COPY requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt
+# --timeout/--retries: torch is a large wheel and the default 15s pip
+# timeout can flake on a slow/throttled connection -- gives it real room
+# instead of failing the whole build on a transient read timeout.
+RUN pip install --no-cache-dir --timeout 180 --retries 5 -r requirements.txt
 
 COPY app/ ./app/
 COPY inference.py train.py ./

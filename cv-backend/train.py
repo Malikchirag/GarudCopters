@@ -132,7 +132,12 @@ def main():
     # `yolo val` would — this is what actually gets reported/shipped.
     print(f"Validating best checkpoint: {best_pt}")
     val_model = YOLO(str(best_pt))
-    metrics = val_model.val(data=str(data_yaml))
+    # project/name here too -- without them Ultralytics falls back to its own
+    # default run dir (it walks up to the nearest git root and writes
+    # <git_root>/runs/detect/val), which silently wrote outside cv-backend/
+    # entirely the first time this ran. Keeping every artifact under
+    # args.project matches the training call above and stays inside the module.
+    metrics = val_model.val(data=str(data_yaml), project=args.project, name=f"{args.name}_val", exist_ok=True)
 
     metrics_out = {
         "run_type": args.run_type,
