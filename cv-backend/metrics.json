@@ -1,0 +1,19 @@
+{
+  "run_type": "smoke_test_synthetic_data",
+  "weights": "/Users/preraknain/GarudCopters/cv-backend/runs/detect/smoke_test/weights/best.pt",
+  "data_yaml": "/Users/preraknain/GarudCopters/cv-backend/data_smoke/data.yaml",
+  "epochs_requested": 3,
+  "imgsz": 320,
+  "batch": 8,
+  "patience": 3,
+  "mAP50": 0.005113257839675792,
+  "mAP50-95": 0.0014328360180839148,
+  "precision": 0.002162162162162162,
+  "recall": 0.3076923076923077,
+  "per_class_mAP50-95": {
+    "person": 0.004298508054251744,
+    "vehicle": 0.0,
+    "debris": 0.0
+  },
+  "note": "Trained on scripts/make_smoke_dataset.py synthetic shapes, not the real aerial-person-detection dataset in DATASET.md. These numbers prove the train/val pipeline runs end-to-end; they are not a model-quality claim."
+}

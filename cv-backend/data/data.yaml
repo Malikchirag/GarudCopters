@@ -11,7 +11,6 @@
 # Until that's run, these folders are empty and train.py will (correctly)
 # refuse to start — see train.py's dataset-empty check.
 
-path: .                # dataset root, relative to this file
 train: train/images
 val: valid/images
 test: test/images

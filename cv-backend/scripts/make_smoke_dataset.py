@@ -88,7 +88,11 @@ def main():
     write_split("valid", args.n_val, rng)
 
     data_yaml = {
-        "path": ".",
+        # No "path" key: Ultralytics then resolves train/val relative to this
+        # yaml file's own directory, regardless of the training script's cwd.
+        # (Setting "path: ." resolves "." against the *caller's* cwd instead,
+        # which silently breaks the moment train.py isn't run from data_smoke/'s
+        # own parent -- learned this the hard way, see train.py's run log.)
         "train": "train/images",
         "val": "valid/images",
         "nc": len(CLASS_NAMES),
