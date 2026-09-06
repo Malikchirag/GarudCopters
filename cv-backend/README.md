@@ -50,33 +50,41 @@ Roboflow Universe dataset
 
 ## Real dataset & results
 
-See [DATASET.md](DATASET.md) for the full, source-checked writeup. Short version:
+See [DATASET.md](DATASET.md) for the full, source-checked writeup, including exactly
+what was downloaded and run and why. Short version:
 
-- **Target dataset**: [Aerial Person Detection Dataset](https://universe.roboflow.com/aerial-person-detection/aerial-person-detection)
-  on Roboflow Universe — 7,015 images, CC BY 4.0, overhead/drone perspective,
-  person + vehicle classes. `scripts/download_dataset.py` pulls it via the
-  Roboflow SDK once `ROBOFLOW_API_KEY` is set.
-- **No Roboflow/GPU access was available in the environment this repo was
-  built in.** So the numbers actually committed in [`metrics.json`](metrics.json)
-  and the checkpoint in `models/best.pt` come from a real, executed
-  `train.py` run — but against a small **synthetic smoke-test set**
-  (`scripts/make_smoke_dataset.py`), not the real dataset above. This proves
-  the training/inference/serving pipeline genuinely works end-to-end; it is
-  **not** a claim about real-world detection accuracy. `metrics.json` tags
-  itself `"run_type": "smoke_test_synthetic_data"` for exactly this reason —
-  see [DATASET.md's honesty note](DATASET.md#honesty-note-what-was-actually-run).
-- To get real, reportable numbers: `export ROBOFLOW_API_KEY=...`, run
-  `python scripts/download_dataset.py`, then `python train.py --publish`.
-  That overwrites `models/best.pt` and `metrics.json` with a genuine
-  production run against the real 7,015-image dataset.
+- **Dataset**: [Aerial Person Detection Dataset](https://universe.roboflow.com/aerial-person-detection/aerial-person-detection)
+  on Roboflow Universe, version 3 — CC BY 4.0, overhead/drone perspective. The actual
+  downloaded export is **6,445 train / 545 valid real images** across 6 classes
+  (`bicycle`, `bus`, `car`, `motorcycle`, `person`, `truck`). `scripts/download_dataset.py`
+  pulls it via the Roboflow SDK once `ROBOFLOW_API_KEY` is set.
+- **`models/best.pt` / [`metrics.json`](metrics.json) are trained on this real data**
+  (not synthetic — an earlier build of this repo shipped a synthetic-data smoke-test
+  checkpoint before a Roboflow key was available; DATASET.md documents both runs).
+  Reduced from the brief's 50-epoch/imgsz=640/full-dataset spec to
+  `epochs=6, imgsz=320, fraction=0.15` because this build machine is CPU-only (no CUDA)
+  — a full-default run was timed at >16 min for a *single* epoch and wasn't practical
+  for this session. `metrics.json` tags this `"run_type": "production"` with a `note`
+  field spelling out the reduction so it's never mistaken for the full-spec result.
+  **Actual numbers**: mAP50 = **0.089**, mAP50-95 = **0.041**, precision = **0.36**,
+  recall = **0.14** — modest, as expected for 6 epochs on 15% of the data, but real:
+  `car` is already the strongest class (mAP50-95 = 0.167), and `inference.py` visibly
+  draws correct boxes around real cars, people, and a motorcycle in held-out validation
+  images at this checkpoint.
+- To reproduce the full spec's real run: `export ROBOFLOW_API_KEY=...`, run
+  `python scripts/download_dataset.py`, then `python train.py --publish` (defaults are
+  `--epochs 50 --imgsz 640 --fraction 1.0`) on a GPU.
 
 ### Known gaps
 
-- **Debris** is reserved as class index 2 in `data/data.yaml` but the primary
-  dataset doesn't include it (see DATASET.md for the closest real dataset
-  found and why it didn't clear the bar). Fine-tuning currently only produces
-  a 2-class (person/vehicle) production model; debris support is a
-  documented roadmap item, not a silently-missing feature.
+- **Debris** has no code gap — `app/agent.py`'s `DEBRIS_CLASSES` and `inference.py`'s
+  debris color are already wired up — but the real dataset's actual downloaded export has
+  no debris/rubble class at all (confirmed by inspecting `data/data.yaml` after download,
+  not assumed from the Universe listing page — see DATASET.md for the closest real
+  candidate dataset found and why it didn't clear the bar). Production classes are
+  currently `person` + 5 vehicle types; debris support is a documented roadmap item.
+- **6 epochs / 15% of the training data**, not the brief's 50-epoch/full-dataset spec —
+  a CPU-only build-machine constraint, not a code limitation (see above).
 
 ## Tech stack
 
@@ -121,7 +129,7 @@ python3 -m venv .venv && source .venv/bin/activate
 pip install -r requirements.txt
 ```
 
-### 2. Get a real dataset (optional — a smoke-test checkpoint already ships)
+### 2. Get the real dataset (optional — a trained checkpoint already ships)
 
 ```bash
 export ROBOFLOW_API_KEY=your_key_here   # https://app.roboflow.com/settings/api
@@ -131,19 +139,28 @@ python scripts/download_dataset.py
 ### 3. Train
 
 ```bash
-# Real run (needs the real dataset from step 2, and ideally a GPU):
+# Full spec (needs the real dataset from step 2, and ideally a GPU -- see
+# DATASET.md for why the checkpoint in this repo used a reduced config instead):
 python train.py --publish
 
-# Or the fast synthetic smoke test used to produce the checkpoint in this repo:
+# The reduced config actually used to produce this repo's checkpoint
+# (CPU-only build machine -- see DATASET.md):
+python train.py --epochs 6 --imgsz 320 --fraction 0.15 --patience 3 \
+    --name production_v2 --run-type production --publish
+
+# Or a fast synthetic smoke test with no real data at all, just to prove the
+# pipeline runs (see DATASET.md -- this is what shipped before a Roboflow key
+# was available):
 python scripts/make_smoke_dataset.py
 python train.py --data data_smoke/data.yaml --epochs 3 --imgsz 320 --batch 8 \
     --patience 3 --name smoke_test --run-type smoke_test_synthetic_data --publish
 ```
 
-Either way this writes `runs/detect/<name>/metrics.json` and, with
-`--publish`, also copies `best.pt` -> `models/best.pt` and the metrics to the
-repo root `metrics.json` — see `train.py`'s docstring for why yolov8n /
-these hyperparameters / default augmentation were chosen.
+Any of these writes `runs/detect/<name>/metrics.json` and, with `--publish`,
+also copies `best.pt` -> `models/best.pt` and the metrics to the repo root
+`metrics.json` — see `train.py`'s docstring for why yolov8n / these
+hyperparameters / default augmentation were chosen, and its `--fraction` flag
+for training on a real (but smaller) slice of the dataset instead of the full set.
 
 ### 4. Run inference standalone (OpenCV)
 
