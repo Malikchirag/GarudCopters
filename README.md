@@ -9,6 +9,8 @@
   <img src="https://img.shields.io/badge/Vite-6-646CFF?style=for-the-badge&logo=vite&logoColor=white" alt="Vite"/>
   <img src="https://img.shields.io/badge/Spline-3D-000000?style=for-the-badge" alt="Spline"/>
   <img src="https://img.shields.io/badge/Chart.js-4-FF6384?style=for-the-badge&logo=chartdotjs&logoColor=white" alt="Chart.js"/>
+  <img src="https://img.shields.io/badge/YOLOv8-CV_Backend-00FFFF?style=for-the-badge" alt="YOLOv8"/>
+  <img src="https://img.shields.io/badge/LangGraph-Agent-purple?style=for-the-badge" alt="LangGraph"/>
 </p>
 
 ---
@@ -44,6 +46,35 @@
 Drone_DM Client is a modern disaster management frontend designed to provide an engaging and immersive user experience through interactive 3D graphics, responsive layouts, and rich visualizations.
 
 Unlike traditional dashboards, this application focuses on visual storytelling by combining Spline-powered animations with React components and interactive charts. The result is a clean, modern interface that makes disaster-related information more intuitive and visually appealing.
+
+This repo now also holds **Garud Copters CV**, a Python computer-vision + agentic AI backend that turns aerial/drone footage into structured incident data this frontend can consume — see below.
+
+---
+
+# 🛰️ Garud Copters CV (ML / Computer Vision Backend)
+
+`cv-backend/` is a disaster-response object detection system: a YOLOv8 model
+fine-tuned to spot **people** and **vehicles** in aerial/disaster imagery,
+served over a FastAPI backend, containerized with Docker, with a LangGraph
+agentic layer on top that turns raw detections into a severity assessment
+and a plain-language incident report.
+
+- **Detect**: `POST /detect/image` and `POST /detect/video` — per-object
+  detections or a frame-sampled aggregate summary
+- **Reason**: `POST /report` runs a LangGraph agent (rule-based severity +
+  Claude-written summary + a recommended next action — "dispatch rescue
+  team" vs "continue monitoring")
+- **Full docs**: [`cv-backend/README.md`](cv-backend/README.md) — architecture,
+  the real dataset used (with license, verified on Roboflow Universe), actual
+  training results, and how to run everything locally
+- **Dataset provenance**: [`cv-backend/DATASET.md`](cv-backend/DATASET.md)
+
+```bash
+cd cv-backend
+python3 -m venv .venv && source .venv/bin/activate
+pip install -r requirements.txt
+uvicorn app.main:app --reload --port 8000
+```
 
 ---
 
@@ -100,6 +131,8 @@ Features include:
 
 # 🛠 Tech Stack
 
+### Frontend (`src/`)
+
 | Technology | Purpose |
 |------------|---------|
 | React 19 | Frontend Framework |
@@ -111,34 +144,53 @@ Features include:
 | React Spline | Spline Integration |
 | ESLint | Code Quality |
 
+### CV / ML Backend (`cv-backend/`)
+
+| Technology | Purpose |
+|------------|---------|
+| YOLOv8 (Ultralytics) | Object detection, fine-tuned via transfer learning |
+| PyTorch | Underlying deep learning framework |
+| OpenCV | Video I/O, frame drawing, centroid tracking |
+| FastAPI | HTTP serving layer |
+| LangGraph | Agentic severity-assessment + report pipeline |
+| Roboflow | Dataset hosting/versioning + Python SDK |
+| Docker | Containerized deployment |
+
 ---
 
 # 📂 Folder Structure
 
 ```text
-src
+.
+├── src                       # React frontend (this Vite app)
+│   ├── assets
+│   ├── components
+│   │   ├── DisasterDeathsChart
+│   │   ├── SplineBanner
+│   │   ├── SplineBannerNoMouse
+│   │   └── ...
+│   ├── layouts
+│   │   ├── header
+│   │   └── footer
+│   ├── pages
+│   │   ├── home
+│   │   └── statistics
+│   ├── routes
+│   ├── App.jsx
+│   ├── main.jsx
+│   └── index.css
 │
-├── assets
-│
-├── components
-│   ├── DisasterDeathsChart
-│   ├── SplineBanner
-│   ├── SplineBannerNoMouse
-│   └── ...
-│
-├── layouts
-│   ├── header
-│   └── footer
-│
-├── pages
-│   ├── home
-│   └── statistics
-│
-├── routes
-│
-├── App.jsx
-├── main.jsx
-└── index.css
+└── cv-backend                # Garud Copters CV — Python ML/CV backend
+    ├── DATASET.md             # dataset provenance, license, honesty note
+    ├── README.md               # full backend docs
+    ├── data/                    # real dataset target (placeholder until populated)
+    ├── scripts/                  # dataset download + smoke-test generator
+    ├── train.py                   # YOLOv8 fine-tuning
+    ├── inference.py                 # OpenCV image/video/webcam pipeline
+    ├── app/                          # FastAPI app + LangGraph agent
+    ├── models/best.pt                 # trained checkpoint
+    ├── metrics.json                    # real training run output
+    └── Dockerfile / docker-compose.yml
 ```
 
 ---
@@ -236,7 +288,8 @@ Maintains consistent code quality and formatting.
 
 # 🌟 Future Improvements
 
-- Live Disaster API
+- Wire the frontend up to `cv-backend`'s `/detect/*` and `/report` endpoints (currently standalone)
+- Debris detection (see `cv-backend/DATASET.md` — reserved class, not yet trained)
 - Authentication
 - User Dashboard
 - GIS Mapping
