@@ -1,0 +1,23 @@
+# YOLOv8 dataset config — placeholder skeleton.
+#
+# This is the REAL dataset target (see ../DATASET.md), not the synthetic
+# smoke-test set (that one lives in ../data_smoke/data.yaml).
+#
+# `scripts/download_dataset.py` overwrites train/valid/test below with real
+# images+labels pulled from Roboflow Universe project
+# aerial-person-detection/aerial-person-detection (7,015 images, CC BY 4.0)
+# and rewrites this file's `nc`/`names` to match the export exactly.
+#
+# Until that's run, these folders are empty and train.py will (correctly)
+# refuse to start — see train.py's dataset-empty check.
+
+path: .                # dataset root, relative to this file
+train: train/images
+val: valid/images
+test: test/images
+
+nc: 3                  # number of classes
+names:
+  0: person            # from Roboflow 'people' / 'pedestrian'
+  1: vehicle           # from Roboflow 'car' / 'truck' / 'bus' / 'van' / 'motor' / 'bicycle' / 'tricycle'
+  2: debris            # reserved — not yet covered by the primary dataset, see DATASET.md

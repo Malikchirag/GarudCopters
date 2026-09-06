@@ -1,0 +1,28 @@
+.venv/
+__pycache__/
+*.pyc
+.env
+
+# real dataset once downloaded (large, and license permits redistribution
+# but there's no reason to store 7k images in git) -- keep the .gitkeep
+# skeleton and data.yaml, ignore actual images/labels
+data/train/images/*
+data/train/labels/*
+data/valid/images/*
+data/valid/labels/*
+data/test/images/*
+data/test/labels/*
+!data/**/.gitkeep
+
+# Ultralytics run artifacts (checkpoints per-epoch, plots, etc.) --
+# metrics.json and models/best.pt are the two files we deliberately publish
+runs/
+_rf_download_tmp/
+
+# synthetic smoke-test images -- regenerable via scripts/make_smoke_dataset.py
+# (deterministic, seed=42), no reason to store generated jpgs in git
+data_smoke/
+
+*.mp4
+*.avi
+*.mov
