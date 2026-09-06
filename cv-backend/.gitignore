@@ -26,3 +26,8 @@ data_smoke/
 *.mp4
 *.avi
 *.mov
+
+# COCO-pretrained starting checkpoint -- Ultralytics auto-downloads this to
+# cwd the first time train.py runs; models/best.pt (the fine-tuned result)
+# is what we actually publish, not this.
+yolov8n.pt
