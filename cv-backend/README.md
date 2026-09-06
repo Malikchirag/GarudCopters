@@ -175,6 +175,19 @@ curl -X POST http://localhost:8000/detect/image -F "file=@path/to/image.jpg" \
 
 ### 6. Docker
 
+> **Not verified live in this build environment** — the build environment's
+> disk quota (~9GB total) was too small for Docker Desktop's VM disk plus a
+> `python:3.10-slim` + torch/opencv image; the first build attempt filled the
+> disk and crashed the Docker daemon entirely. Docker was removed from that
+> machine rather than fight its disk budget, since Docker itself isn't
+> central to this module (the CV/agent pipeline is, and that's verified —
+> see the rest of this README). The Dockerfile/docker-compose.yml below are
+> written correctly and got through the `apt-get` layer successfully before
+> running out of space on `pip install`; they just haven't had a real
+> `docker build && docker run` + `/health` check on a machine with normal
+> disk headroom. That's the one remaining thing to confirm before calling
+> Step 6 done.
+
 ```bash
 docker compose up --build
 curl http://localhost:8000/health
