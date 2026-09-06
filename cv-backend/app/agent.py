@@ -64,6 +64,19 @@ class AgentState(TypedDict):
 # cost of missing real survivors is much higher than a false alarm.
 LOW_CONFIDENCE_THRESHOLD = 0.5
 
+# The real Roboflow export (see DATASET.md) ships its own 6-class taxonomy
+# -- car/truck/bus/motorcycle/bicycle as separate classes, not a single
+# merged "vehicle" -- while the synthetic smoke-test set (and the original
+# data/data.yaml placeholder) uses a single "vehicle" class. Grouping by set
+# membership rather than one dict key means severity logic works unchanged
+# against either checkpoint's class names.
+VEHICLE_CLASSES = {"vehicle", "car", "truck", "bus", "motorcycle", "bicycle"}
+DEBRIS_CLASSES = {"debris"}  # reserved, not present in the real dataset -- see DATASET.md
+
+
+def _sum_classes(count_by_class: dict, classes: set) -> int:
+    return sum(v for k, v in count_by_class.items() if k in classes)
+
 ACTION_RULES = {
     "HIGH": {
         "action": "Dispatch rescue team to this location immediately",
@@ -131,8 +144,8 @@ def assess_severity(state: AgentState) -> AgentState:
     detected = NONE. Deliberately not an LLM judgment call — see module docstring.
     """
     person_count = state["count_by_class"].get("person", 0)
-    vehicle_count = state["count_by_class"].get("vehicle", 0)
-    debris_count = state["count_by_class"].get("debris", 0)
+    vehicle_count = _sum_classes(state["count_by_class"], VEHICLE_CLASSES)
+    debris_count = _sum_classes(state["count_by_class"], DEBRIS_CLASSES)
     person_conf = state["avg_confidence_by_class"].get("person")
 
     reasons = []

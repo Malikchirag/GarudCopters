@@ -85,10 +85,24 @@ def main() -> int:
                     shutil.copy2(f, dst / sub / f.name)
 
     # Roboflow's export writes its own data.yaml with correct class names/order —
-    # trust that over our placeholder once real data lands.
+    # trust that over our placeholder once real data lands. But its train/val/test
+    # paths (e.g. "../train/images") assume data.yaml sits one directory level
+    # below the split folders, which is Roboflow's own zip layout, not ours --
+    # here data.yaml lands in args.out right next to train/valid/test. Rewrite
+    # those three keys to plain relative paths so it actually matches our layout
+    # instead of silently pointing outside args.out. (Hit this for real: the
+    # first download produced a data.yaml that pointed at
+    # cv-backend/train/images instead of cv-backend/data/train/images.)
     rf_yaml = tmp_dir / "data.yaml"
     if rf_yaml.exists():
-        shutil.copy2(rf_yaml, args.out / "data.yaml")
+        import yaml as _yaml
+
+        cfg = _yaml.safe_load(rf_yaml.read_text())
+        cfg["train"] = "train/images"
+        cfg["val"] = "valid/images"
+        if "test" in cfg:
+            cfg["test"] = "test/images"
+        (args.out / "data.yaml").write_text(_yaml.dump(cfg, sort_keys=False))
 
     shutil.rmtree(tmp_dir, ignore_errors=True)
     print(f"Done. Real dataset now in {args.out} — train.py can be run as-is.")
